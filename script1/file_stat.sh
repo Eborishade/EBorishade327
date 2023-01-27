@@ -1,47 +1,48 @@
-echo Hello
-echo $0
-echo You entered $1
+#Emmanuel Borishade
+#Description: Bash shell script that lists all the files in a given directory
+# along with their file sizes and last modification date.
+#
+#
+
+#Test whether directory entered in $1
 if [[ -z ${1} ]]; then 
     echo "You didn't enter an argument"
+    
+    #Ask for a directory
+    read -p "Enter a directory : " dir
+
+    #If does not exist, exit
+    if [[ -z ${1} ]]; then 
+        exit
+    fi
+
+    _new_dir=dir
+
+else 
+_new_dir=$1
 
 fi
 
-echo path: ${PATH}
-echo current program ${0}
-echo
-echo
 
-echo creating var
-new_var=this-is-it
-echo $new_var
+echo You entered _new_dir
+_sub_dirs=$(find $_new_dir)
 
-new_dir=/usr/bin
-echo this $new_dir is a directory 
-echo
-echo running help...
-help | grep ec
+#Use Stat to find stats:
+#stat %y prints time of last data mod %Y = time in seconds %s = size 
+#stat --format=%s::%y [directory]
 
-echo
-echo
-echo
+printf "Filename\t\t\t\tSize\tLast Modified\n==============================\t\t======\t===============\n" >> output.txt
+#Looks like:
+#Filename                                                Size    Last Modfified
+#==============================                          ======  ===============
 
-#parameter expansion
-echo this is $new_dir/test a directory expansion
-#command substitution
-echo "1 Machine hardware name is $(uname -m)"
+for _directory in $_sub_dirs;
+ do 
+    _size=$(stat --format=%s $_directory)
+    _modded=$(stat --format=%y $_directory)
 
-hardware_name=$(uname -m)
-echo "2 Machine hardware name is $hardware_name"
+    #printf "$_directory $_size $_modded\n"
+    printf "%-39s %6s %36s \n" "$_directory" "$_size" "$_modded" >> output.txt;
 
-echo 3 machine hardware name is $hardware_name
+done
 
-echo "The hostname is $(uname -a)"
-echo "The hostname cut is $(uname -a | cut -d " " -f 2)"
-
-echo "\tKernal Release:\t%s\n" "$(uname -r)"
-printf "\tKernal Release:\t%s\n" "$(uname -r)"
-printf "\tKernal Release:\t%s\t%s\n" "$(uname -r) $(uname -m)"
-
-
-num=3
-#for $num in $num do $(find ..); done
