@@ -9,22 +9,20 @@ if [[ -z ${1} ]]; then
     echo "You didn't enter an argument"
     
     #Ask for a directory
-    read -p "Enter a directory : " dir
+    read -p "Enter a directory : " new_thing
 
-    #If does not exist, exit
-    if [[ -z ${1} ]]; then 
-        exit
-    fi
+    #If empty, exit
+    #if [[ -z ${1} ]]; then 
+    #    exit
+    #fi
 
-    _new_dir=dir
+    _new_dir=$new_thing
 
 else 
-_new_dir=$1
+    _new_dir=$1
 
 fi
 
-
-echo You entered _new_dir
 _sub_dirs=$(find $_new_dir)
 
 #Use Stat to find stats:
@@ -32,6 +30,10 @@ _sub_dirs=$(find $_new_dir)
 #stat --format=%s::%y [directory]
 
 printf "Filename\t\t\t\tSize\tLast Modified\n==============================\t\t======\t===============\n" >> output.txt
+#Also possible:
+#printf "%-39s %6s %36s \n" "Filename" "Size" "Last Modified" >> output.txt
+#printf "%-39s %6s %36s \n" "===============================" "======" "===============================" >> output.txt
+
 #Looks like:
 #Filename                                                Size    Last Modfified
 #==============================                          ======  ===============
