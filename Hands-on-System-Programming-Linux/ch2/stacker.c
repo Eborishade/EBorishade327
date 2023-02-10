@@ -55,7 +55,7 @@ static void foo(void)
 	bar();
 }
 
-int main(int argc, char **argv)
+int main()//int argc, char **argv)
 {
 	int localvar = 5;
 

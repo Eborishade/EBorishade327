@@ -1,8 +1,7 @@
 #Emmanuel Borishade
 #Description: Bash shell script that lists all the files in a given directory
 # along with their file sizes and last modification date.
-#
-#
+
 
 #Test whether directory entered in $1
 if [[ -z ${1} ]]; then 
