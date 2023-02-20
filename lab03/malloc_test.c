@@ -13,9 +13,13 @@ int main (void) {
 
     char* ptr = alloc_bytes(512);
     printf("\nAllocated 512 bytes %p\n", ptr);
-   
+    malloc_stats();
+
+    char* ptr = realloc_bytes(1024);
+    printf("\nReallocated 1024 bytes %p\n", ptr);
     malloc_stats();
     free(ptr);
+
 
 
 }
