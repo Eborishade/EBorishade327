@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 #include "../common.h"
 
 /*---------------- Globals, Macros ----------------------------*/
@@ -136,8 +137,11 @@ static void doublefree(int cond)
 	if (cond) {
 		bogus = malloc(-1UL); /* will fail! */
 		if (!bogus) {
-			fprintf(stderr, "%s:%s:%d: malloc failed\n",
-			   __FILE__, __func__, __LINE__);
+			int err = errno;
+			perror(">> doublefree");
+			errno = 0; 
+			fprintf(stderr, "%s:%s:%d:%d malloc failed\n",
+			   __FILE__, __func__, __LINE__, err);
 			free(ptr); /* Bug: double-free */
 			exit(EXIT_FAILURE);
 		}

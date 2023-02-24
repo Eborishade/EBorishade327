@@ -1,0 +1,10 @@
+# install the cmocka library
+sudo apt install libcmockda-dev
+
+# compile list.c to object file list.o
+gcc -c list.c
+
+#compile and link test_list.c
+gcc test_list.c -o test_list list.o -lcmocka -I/usr/include/cmockda -L/usr/lib/x86_64-linux-gnu/
+gcc test_list.c -o test_list list.o -lcmocka -I/usr/include/cmockda
+gcc test_list.c -o test_list list.o -lcmocka
