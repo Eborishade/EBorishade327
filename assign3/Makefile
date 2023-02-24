@@ -1,21 +1,23 @@
 # Makefile
-# Assign3
+# Assign3: compare static vs dynamic library linking (looking at file size)
 CC=gcc
 CFLAGS = -g -ggdb -gdwarf-4 -O0 -Wall -Wextra
-OBJECTS = compare_static.o compare_dynamic.o compare.o
+OBJ = compare_static compare_dynamic compare.o
+executables = compare_static compare_dynamic
 
 all: compare
 
-compare: $(OBJECTS)
-# do comparison
+compare: $(OBJ)
+# list file sizes of executables (ls -hs) (stat -c%s [file1]) or (size [file])
+	stat -c%s $(executables)
+
+compare_static: compare.o
+	$(CC) $(CFLAGS) -static -o compare_static compare.o
 
 
-compare_static.o: compare.o
-	$(CC) $(CFLAGS) -o compare_static
-
-
-compare_dynamic.o: compare.o
-	$(CC) $(CFLAGS) -o compare_dynamic
+compare_dynamic: compare.o 
+#gcc compiles using dynamic library linking by default
+	$(CC) $(CFLAGS) -o compare_dynamic compare.o
 
 
 compare.o: compare.c
@@ -23,4 +25,4 @@ compare.o: compare.c
 
 
 clean:
-	rm -vf *.o 
+	rm -vf *.o compare_*
