@@ -1,3 +1,4 @@
+/* Private data and functions */
 #ifndef LIST_INTERNAL_H
 #define LIST_INTERNAL_H
 #include "list.h"

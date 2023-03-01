@@ -3,8 +3,21 @@ sudo apt install libcmockda-dev
 
 # compile list.c to object file list.o
 gcc -c list.c
+gcc -fprofile-arcs -ftest-coverage -c list.c
+gcc -c list.c
 
 #compile and link test_list.c
 gcc test_list.c -o test_list list.o -lcmocka -I/usr/include/cmockda -L/usr/lib/x86_64-linux-gnu/
 gcc test_list.c -o test_list list.o -lcmocka -I/usr/include/cmockda
 gcc test_list.c -o test_list list.o -lcmocka
+
+lcov --capture --directory . --output-file coverage.info
+genhtml coverage.info --output-directory coverage-html
+
+The first command creates a coverage data file named coverage.info 
+from the .gcov files in the current directory. The second command generates 
+an HTML report from the coverage.info file and saves it to the 
+coverage-html directory.
+
+View the HTML report: Open the index.html file in the coverage-html directory 
+to view the HTML coverage report in your web browser.

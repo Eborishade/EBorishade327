@@ -1,3 +1,4 @@
+/* Public facing header file */
 #include <stdbool.h>
 
 typedef struct node_type NODE;
@@ -9,9 +10,10 @@ typedef struct list_type LIST;
 // Create a list
 LIST *list_create();
 
-
 // destroy a list
 void list_destroy(LIST *list);
+
+void list_free(LIST *list, void (*free_data)(void *data));
 
 // Append the element at the end of the list.
 void list_append(LIST *list, void *element);

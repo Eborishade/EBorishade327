@@ -15,24 +15,18 @@ LIST *list_create(){
     return new_list;
 }
 
-void list_append(LIST *list, void *element){
-     NODE *new_node = malloc(sizeof(NODE));
-     new_node = element;
-     
-        if (!new_node){
+void list_append(LIST *list, void *element) {
+    if (list->head == NULL && list->tail == NULL) {
+        NODE *new_node = malloc(sizeof(NODE));
+        if (!new_node) {
             perror("list_append");
             exit(EXIT_FAILURE);
         }
-
-    if (list->head == NULL && list->tail == NULL){ //list empty: head=tail=element
-        list->head = *new_node;
-        list->tail = list->head;
+        new_node->data = element;
+        new_node->next = NULL; 
+        list->head = new_node;
+        list->tail = new_node;
     }
 
-    if (list>head != NULL){//list already has element: tail = element
-        list->tail->next = *new_node;
-        list->tail = *new_node;
-    }
     
-
 }
