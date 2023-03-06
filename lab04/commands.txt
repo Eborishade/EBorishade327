@@ -11,6 +11,15 @@ gcc test_list.c -o test_list list.o -lcmocka -I/usr/include/cmockda -L/usr/lib/x
 gcc test_list.c -o test_list list.o -lcmocka -I/usr/include/cmockda
 gcc test_list.c -o test_list list.o -lcmocka
 
+# recompile and link for Unit Testing
+gcc -g -ggdb -gdwarf-4 -O0 -Wall -Wextra -c list.c
+gcc -g -ggdb -gdwarf-4 -O0 -Wall -Wextra -Wl,--wrap=free test_list.c -o test_list list.o -lcmocka
+
+# run the tests
+./test_list
+
+
+
 lcov --capture --directory . --output-file coverage.info
 genhtml coverage.info --output-directory coverage-html
 
