@@ -33,8 +33,14 @@ int main(int argc, char **argv)
 	}
 	
 	/* Have us, the predecessor, exec the successor! */
-	if (execl("/bin/uname", "uname", argv[1], (char *)0) == -1)
-		FATAL("execl failed\n");
+	if (argc ==2){
+		if (execl("/bin/uname", "uname", argv[1], (char *)0) == -1)
+			FATAL("execl failed\n");
+
+	} else {
+		if (execl("/bin/uname", "uname", argv[1], argv[2]) == -1)
+			FATAL("execl failed\n");
+	}
 	
 	printf("This should never get executed!\n");
 	exit (EXIT_SUCCESS);
