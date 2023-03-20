@@ -1,0 +1,60 @@
+1. What is the host name?
+ cat /proc/sys/kernel/hostname -> Watako-C
+
+2. What is the CPU type and model?
+ cat /proc/cpuinfo -> 
+ [line 2] "vendor_id : GenuineIntel" 
+ [line 5] "model name : 11th Gen Intel(R) Core(TM)...
+
+3. What version of the Linux kernel is being used?
+ cat /proc/version -> Linux version 4.4.0-19041-Microsoft (Microsoft@Microsoft.com) (gcc version 5.4.0 (GCC) ) #2311-Microsoft Tue Nov 08 17:09:00 PST 2022   
+
+4. How long (in days, hours, and minutes) has it been since the system was last booted?
+ cat /proc/uptime -> "1309.13 4768.47" 
+ [value 1 = uptime of system in seconds] 1309.12s = 21.81883min (1309.12/60)
+ [value 2 = time spent in idle in seconds]  4768.47s = 79.4745min = 1.324575h 
+
+USING VAL2:
+ 1.32457h = 1 hour, 0.32457 min * 60 = 19.4745min, 0.4745min * 60 = 28.47sec, 0.47 * 1000 = 470milliseconds
+ 1:19:28:47
+
+
+Hours = 1,        Minutes = 79 (reduced: 79-(60*1) = 19),      Seconds = 4768 (reduced: 4768-(60*79) = 28), Milliseconds = 4768470 (reduced: 4768470-(1000*4768) = 470) 
+H: (4768/60)/60           M: 4768/60                              S: 4768                                      MS: 4768*1000
+
+
+5. How much of the total CPU time has been spend executing in user mode, system mode and idle?
+ cat /proc/stat -> [line 1]
+		 [usr]   [sys] [idle]
+   [total]  cpu  52630 0 47339 926025 0 3536 0 0 0 0
+   ---------------------------------------------------------
+            cpu0 12821 0 16500 227178 0 2931 0 0 0 0
+            cpu1 11521 0 9543 235434 0 245 0 0 0 0
+            cpu2 14228 0 11345 230926 0 192 0 0 0 0
+            cpu3 14060 0 9951 232487 0 168 0 0 0 0
+
+  The amount of time, measured in units of USER_HZ (1/100ths of a second on most architectures, use sysconf(_SC_CLK_TCK) to obtain the right value),
+  that the system ("cpu" line) or the specific CPU ("cpuN" line) spent in various states:
+  user   (1) Time spent in user mode.
+  nice   (2) Time spent in user mode with low priority (nice).
+  system (3) Time spent in system mode.
+  idle   (4) Time spent in the idle task.  This value should be USER_HZ times the second entry in the /proc/uptime pseudo-file.
+  iowait 	(5) Time waiting for I/O to complete.  This value is not reliable, for the following reasons: 1. The  CPU  will  not  wait for I/O to complete; iowait is the time that a task is waiting for I/O to complete.  When a CPU goes into idle state for outstanding task I/O, another task will be scheduled on this CPU. 2. On a multi-core CPU, the task waiting for I/O to complete is not running on any CPU, so the iowait of each CPU is  difficult  to  calculate. 3. The value in this field may decrease in certain conditions.
+  irq    	(6) Time servicing interrupts.
+  softirq	(7) Time servicing softirqs.
+  steal  	(8) Stolen time, which is the time spent in other operating systems when running in a virtualized environment
+   guest	(9) Time spent running a virtual CPU for guest operating systems under the control of the Linux kernel.
+   guest_nice 	(10) Time spent running a niced guest (virtual CPU for guest operating systems under the control of the Linux kernel).
+
+in C: long clock_ticks = sysconf(_SC_CLK_TCK);
+in shell: getconf CLK_TCK = 100 so itis 1/100ths confirmed
+52630centiseconds -> 526300ms (52630*10)
+
+
+
+6. How much memory is configured for it?
+ cat /proc/meminfo -> [line 1] "MemTotal: 3878640 kB"
+
+
+7. How much memory is currently available on it?
+ cat /proc/meminfo -> [line 2] "MemFree: 583008 kB" 

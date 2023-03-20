@@ -1,6 +1,8 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "timeb.h": "c"
+        "timeb.h": "c",
+        "xstring": "c",
+        "xutility": "c"
     }
 }
