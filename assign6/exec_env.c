@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <unistd.h>
+#include <errno.h>
 
 int main(int argc, char **argv)
 {
@@ -11,22 +13,35 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
+    //create environmental variables to pass to execd program
     char *env_vars[6];
-    env_vars[0] = "HOME="+getenv("HOME"); // ->uses printenv to get: "HOME=/home/..."
-    env_vars[1] = "PATH=/usr/bin" ;
-    env_vars[2] = "SHELL="+getenv("SHELL"); 
-    env_vars[3] = "EXECD_PGM_NAME="+argv[2];
-    env_vars[4] = "PWD="+getenv("PWD"); 
-    //env_vars[5] = NULL;
 
+    env_vars[0] = calloc(100, sizeof(char));
+    strcpy(env_vars[0], "HOME=");
+    strcat(env_vars[0], getenv("HOME")); 
+    
+    env_vars[1] = "PATH=/usr/bin";
+
+    env_vars[2] = calloc(100, sizeof(char));
+    strcpy(env_vars[2], "SHELL=");
+    strcat(env_vars[2], getenv("SHELL"));
+    
+    env_vars[3] = argv[2];
+
+    env_vars[4] = calloc(100, sizeof(char));
+    strcpy(env_vars[4], "PWD=");
+    strcat(env_vars[4], getenv("PWD"));
+    env_vars[5] = NULL;
+    
+
+    //get path to program and new name to run under
     char* pgm_path = argv[1];
-    char* new_pr_name = argv[2];
+    char* pgm_name = argv[2];
 
-    prctl(pgm_path, new_pr_name);
-    if(execle(pgm_path, new_pr_name, (char*)0, env_vars) == -1){
-        FATAL("execle failed\n");
+    if(execle(pgm_path, pgm_name, NULL, env_vars) == -1){
+		perror("execle Failed");
+		exit(EXIT_FAILURE);
 	}
 
 	exit(EXIT_SUCCESS);
-
 }

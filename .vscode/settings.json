@@ -4,6 +4,7 @@
         "timeb.h": "c",
         "xstring": "c",
         "xutility": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "errno.h": "c"
     }
 }
