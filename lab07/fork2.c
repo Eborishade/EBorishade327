@@ -31,8 +31,10 @@ int main()
             printf("Parent! PID# %d\n", getpid());
             printf("Waiting for Child process (PID# %d)...\n\n", ret);
             
-            //pid_t child_pid = wait(0); //without wait, parent dies before child (now orphaned)
-            //printf("Child process died! (PID %d)\n", child_pid);
+            /*Parent died before child due to comments:
+            pid_t child_pid = wait(0); //without wait, parent dies before child (ORPHAN  PROCESS born)
+            printf("Child process died! (PID %d)\n", child_pid);
+            */
             break;
 
     }

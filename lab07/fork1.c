@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 /*
 Basic Fork Usage
 */
@@ -24,6 +25,10 @@ int main()
             //ret val from fork in parent
             printf("Parent! PID# %d\n", getpid());
             printf("Child process = PID# %d\n", ret);
+            printf("Waiting for Child process (PID# %d)...\n\n", ret);
+            
+            pid_t child_pid = wait(0); //without wait, parent dies before child (now orphaned)
+            printf("Child process(PID %d) died!\n", child_pid);
             break;
 
     }
