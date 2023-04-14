@@ -31,7 +31,7 @@ void signal_handler (int signum, siginfo_t* siginfo, void* context){
 void send_ACK_to_pid(pid_t dest_pid){
     //use sigqueue to send the SIGUSR1 signal along with the dest_pid
 
-    printf("process_a sending ACK signal to pid\n");
+    printf("process_a sending ACK signal to pid %d\n", dest_pid);
     union sigval my_pid;
     my_pid.sival_int = getpid();
     if (sigqueue(dest_pid, SIGUSR1, my_pid) < 0 ){
@@ -69,6 +69,7 @@ int main(int argc, char* argv[0]){
 
         if (send_signal_flag){
             send_ACK_to_pid(process_b_pid);
+            send_signal_flag = 0;
         }
              
     }

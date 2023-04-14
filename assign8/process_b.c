@@ -11,7 +11,7 @@
 /*
 Program Description:
 
-Wait to recieve SIGINT from Terminal. [env kill --signal -SIGINT -q <proc A pid> <proc B pid>] 
+Wait to recieve SIGINT from Terminal. 
 If SIGINT recieved, catch, send SIGUSR1 to process A (A pid found in siginfo)
 Process A will send SIGUSR1 as ACK.
 Catch ACK.
@@ -40,7 +40,7 @@ void signal_handler(int signum, siginfo_t *siginfo, void *context){
 void send_signal_to_pid(pid_t dest_pid){
     //use sigqueue to send the SIGUSR1 signal along with the dest_pid
 
-    printf("process_b sending signal to pid");
+    printf("process_b sending signal to pid %d\n", dest_pid);
     union sigval my_pid;
     my_pid.sival_int = getpid();
     if (sigqueue(dest_pid, SIGUSR1, my_pid) < 0 ){
