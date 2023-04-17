@@ -14,6 +14,11 @@
  * the worker routine.
  *
  * For details, please refer the book, Ch 14.
+ * 
+ * 
+ * note: do ctrlz to pause, ps -L to see defunct/zombie threads
+ * do jobs to see job num
+ * do fg%[num] to resume 
  */
 #include <stdio.h>
 #include <stdlib.h>

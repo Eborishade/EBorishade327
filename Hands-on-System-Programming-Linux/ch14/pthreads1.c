@@ -11,8 +11,10 @@
  * Brief Description:
  * A very simplistic (and in fact, incorrect - racy!) 'Hello, world' for
  * multithreading with Pthreads.
- *
+ * 
  * For details, please refer the book, Ch 14.
+ * 
+ * Note: race condition: Thread processes vs main process exit  
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +42,7 @@ int main(void)
 		if (ret)
 			FATAL("pthread_create() failed! [%d]\n", ret);
 	}
-
+	sleep(5); //PREVENTS RACE CONDITION - sleeps main thread while other threads do work
 	exit(EXIT_SUCCESS);
 }
 
