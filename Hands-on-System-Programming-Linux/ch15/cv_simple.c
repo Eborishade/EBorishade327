@@ -61,9 +61,9 @@ static void * workerB(void *msg)
 static void * workerA(void *msg)
 {
 	int ret=0;
-
+	sleep (3);//if thread B finishes before thread A gets to wait condition, A is stuck waiting forever.
 	LOCK_MTX(&mycv_mutex);
-	while (1) {
+	while (!gWorkDone) {//instead of while(1) which gets A stuck in above condition, use while(!gWorkDone)
 		printf(" [thread A] : now waiting on the CV for thread B to finish...\n");
 		ret = pthread_cond_wait(&mycv, &mycv_mutex);
 		// Blocking: associated mutex auto-released ...

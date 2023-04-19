@@ -38,7 +38,7 @@ static void * worker(void *data)
 	}
 
 	/*--- Critical Section begins */
-	g1 ++; g2 ++; g3 ++;
+	g1 ++; g2 ++; sleep(1); g3 ++;
 	printf("[Thread #%ld] %2ld   %2ld   %2ld\n", datum, g1, g2, g3);
 	/*--- Critical Section ends */
 
