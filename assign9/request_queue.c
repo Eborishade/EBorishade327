@@ -41,7 +41,7 @@ void add_request(struct request_queue* req_queue, int request_num) {
     struct request* new_req = NULL;
 
     // TODO complete the code as described in the comments
-    
+    //use broadcast API to notify all threads
 }
 
 /**
@@ -56,6 +56,11 @@ void add_request(struct request_queue* req_queue, int request_num) {
 struct request* wait_for_request(struct request_queue* req_queue) {
     struct request* req = NULL;
     // TODO complete this function
+
+    //check queue closed: true->return
+    //check available
+    //if nothing available, block
+    //if is available wake due to broadcast, take & return
 
     return req;
 }

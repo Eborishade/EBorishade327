@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <stdlib.h>
 
-// man pthread_create
+
 #define handle_error_en(en, msg) \
     do {                         \
         errno = en;              \

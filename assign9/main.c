@@ -53,6 +53,7 @@ int main(int argc, char* argv[]) {
         nap_random();
     }
 
+    //destructors
     close_request_queue(req_queue);
     delete_worker_thread_pool(thread_pool);
     delete_request_queue(req_queue);

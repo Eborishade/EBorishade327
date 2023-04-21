@@ -20,8 +20,8 @@ struct worker_thread {
 struct worker_thread_pool {
     int last_thread_id;                 // Id of last thread in linked list
     int num_threads;                    // number of threads in pool
-    struct worker_thread* thread_list;  // linked list of threads
-    struct worker_thread* last_thread;  // last thread in list
+    struct worker_thread* thread_list;  // HEAD: linked list of threads
+    struct worker_thread* last_thread;  // TAIL: last thread in list
     struct request_queue* req_queue;
 };
 

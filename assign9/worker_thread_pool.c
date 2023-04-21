@@ -55,6 +55,7 @@ void add_worker_thread(struct worker_thread_pool* pool) {
 static pthread_t start_worker_thread(struct worker_thread_params* params) {
     pthread_t pthread_id = 0;
     // TODO complete this function
+    //pthread create, returns pthread id.
 
     return pthread_id;
 }
