@@ -74,7 +74,7 @@ void* do_work(void* worker_thread_params) {
         }
     } while(!done);
 
-    fprintf(stderr, "thread-%d exiting. Processed %d requests.\n", params->thread_id, req_processed_count);
+    fprintf(stderr, "thread-%d exiting. Processed %d total requests.\n", params->thread_id, req_processed_count);
     free(params);
     pthread_exit((void*)0);
 }

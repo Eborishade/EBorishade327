@@ -5,6 +5,14 @@
 #include "common.h"
 
 static int next_thread_id = 0;
+/* 
+use handle_error_en() found in common.h to handle pthread errors
+Example:
+    int ret = 0;                                 
+    if ( (ret = pthread_mutex_lock(mtx)) ){        
+        handle_error_en(ret, "pthread_mutex_lock"); 
+    }
+*/
 static pthread_t start_worker_thread(struct worker_thread_params* params);
 
 struct worker_thread_pool* create_worker_thread_pool(

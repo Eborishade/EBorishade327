@@ -12,8 +12,18 @@
 static void nap_random();
 
 int main(int argc, char* argv[]) {
+    /* 
+    use handle_error_en() found in common.h to handle pthread errors
+    Example:
+        int ret = 0;                                 
+        if ( (ret = pthread_mutex_lock(mtx)) ){        
+            handle_error_en(ret, "pthread_mutex_lock"); 
+        }
+    */
+
+    // *** begin constructors ***
     static pthread_mutex_t req_mutex = PTHREAD_MUTEX_INITIALIZER;
-    static pthread_cond_t req_cond;
+    static pthread_cond_t req_cond; 
     static pthread_condattr_t condattr;
 
     int thread_pool_size = 0;
@@ -31,16 +41,26 @@ int main(int argc, char* argv[]) {
     srandom(time(0));
 
     // TODO initialize the condattr
+    if ((ret = pthread_condattr_init(&condattr)))
+        handle_error_en(ret, "pthread_condattr_init");
 
     // TODO initialize the req_cond
+    if ((ret = pthread_cond_init(&req_cond, &condattr)))
+        handle_error_en(ret, "pthread_cond_init");
 
     // TODO destroy the condattr
+    if ((ret = pthread_condattr_destroy(&condattr)))
+        handle_error_en(ret, "pthread_condattr_destroy");
 
     struct request_queue* req_queue =
         create_request_queue(&req_mutex, &req_cond);
 
     struct worker_thread_pool* thread_pool =
         create_worker_thread_pool(req_queue);
+
+
+    // *** end constructors ***
+
 
     for (int i = 0; i < thread_pool_size; ++i) {
         add_worker_thread(thread_pool);
@@ -59,8 +79,12 @@ int main(int argc, char* argv[]) {
     delete_request_queue(req_queue);
 
     // TODO destroy the req_mutex
+    if ((ret = pthread_mutex_destroy(&req_mutex)))
+        handle_error_en(ret, "pthread_mutex_destroy");
 
     // TODO destroy the req_cond
+    if ((ret = pthread_cond_destroy(&req_cond)))
+        handle_error_en(ret, "pthread_cond_destroy");
 
     pthread_exit((void*)0);
     exit(EXIT_SUCCESS);
