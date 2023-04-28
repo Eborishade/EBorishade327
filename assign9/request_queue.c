@@ -37,7 +37,7 @@ struct request_queue* create_request_queue(pthread_mutex_t* p_mutex,
  * @param request_num the request number that is assigned to the new request
  */
 void add_request(struct request_queue* req_queue, int request_num) {
-    // TODO dynamically allocate memory for a request object
+    // dynamically allocate memory for a request object
     struct request* new_req = NULL;
     new_req = malloc(sizeof(struct request));
     if (!new_req) {
@@ -82,19 +82,13 @@ void add_request(struct request_queue* req_queue, int request_num) {
  */
 struct request* wait_for_request(struct request_queue* req_queue) {
     struct request* req = NULL;
-    // TODO complete this function
-
-    //check queue closed: true->return
-    //check available
-    //if nothing available, block
-    //if is available wake due to broadcast, take & return
 
     // Begin Critical Section
     LOCK_MTX(req_queue->mutex);
 
     while (!(req_queue->num_requests == 0 && req_queue->is_closed)) {
 
-        //if there are requests, take off queue, adjust head ptr
+        //if there are requests, take off queue, adjust head ptr.. BREAK to send to thread
         if (req_queue->num_requests > 0) {
             req = req_queue->head; 
             req_queue->head = req->next;
@@ -102,7 +96,7 @@ struct request* wait_for_request(struct request_queue* req_queue) {
             if (req_queue->head == NULL) {
                 req_queue->tail = NULL;
             }
-            --req_queue->num_requests; //!!!! HOW DOES REQ MAKE IT TO WORKER THREAD? !!!!
+            --req_queue->num_requests;
             break;
 
         } else{
@@ -149,8 +143,6 @@ void delete_request_queue(struct request_queue* req_queue) {
  * @param req_queue a pointer to the request queue
  */
 void close_request_queue(struct request_queue* req_queue) {
-    // TODO complete this function
-    
     // Begin Critical Section
     LOCK_MTX(req_queue->mutex);
 

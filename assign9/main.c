@@ -4,7 +4,6 @@
 
 #include <pthread.h>
 #include <stdio.h>
-
 #include "common.h"
 #include "request_queue.h"
 #include "worker_thread_pool.h"
@@ -12,15 +11,6 @@
 static void nap_random();
 
 int main(int argc, char* argv[]) {
-    /* 
-    use handle_error_en() found in common.h to handle pthread errors
-    Example:
-        int ret = 0;                                 
-        if ( (ret = pthread_mutex_lock(mtx)) ){        
-            handle_error_en(ret, "pthread_mutex_lock"); 
-        }
-    */
-
     // *** begin constructors ***
     static pthread_mutex_t req_mutex = PTHREAD_MUTEX_INITIALIZER;
     static pthread_cond_t req_cond; 
@@ -40,24 +30,20 @@ int main(int argc, char* argv[]) {
     srand(time(0));
     srandom(time(0));
 
-    // TODO initialize the condattr
+    // initialize the condattr & req_cond
     if ((ret = pthread_condattr_init(&condattr)))
         handle_error_en(ret, "pthread_condattr_init");
-
-    // TODO initialize the req_cond
     if ((ret = pthread_cond_init(&req_cond, &condattr)))
         handle_error_en(ret, "pthread_cond_init");
 
-    // TODO destroy the condattr
+    // destroy the condattr
     if ((ret = pthread_condattr_destroy(&condattr)))
         handle_error_en(ret, "pthread_condattr_destroy");
 
     struct request_queue* req_queue =
         create_request_queue(&req_mutex, &req_cond);
-
     struct worker_thread_pool* thread_pool =
         create_worker_thread_pool(req_queue);
-
 
     // *** end constructors ***
 
@@ -77,14 +63,11 @@ int main(int argc, char* argv[]) {
 
     //destructors
     close_request_queue(req_queue);
-    delete_worker_thread_pool(thread_pool);
-    delete_request_queue(req_queue);
+    delete_worker_thread_pool(thread_pool); //waits for threads to finish all work
 
-    // TODO destroy the req_mutex
+    delete_request_queue(req_queue);
     if ((ret = pthread_mutex_destroy(&req_mutex)))
         handle_error_en(ret, "pthread_mutex_destroy");
-
-    // TODO destroy the req_cond
     if ((ret = pthread_cond_destroy(&req_cond)))
         handle_error_en(ret, "pthread_cond_destroy");
 

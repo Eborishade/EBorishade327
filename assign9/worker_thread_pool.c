@@ -1,18 +1,8 @@
 #include "worker_thread_pool.h"
-
 #include <assert.h>
-
 #include "common.h"
 
 static int next_thread_id = 0;
-/* 
-use handle_error_en() found in common.h to handle pthread errors
-Example:
-    int ret = 0;                                 
-    if ( (ret = pthread_mutex_lock(mtx)) ){        
-        handle_error_en(ret, "pthread_mutex_lock"); 
-    }
-*/
 static pthread_t start_worker_thread(struct worker_thread_params* params);
 
 
@@ -64,8 +54,6 @@ void add_worker_thread(struct worker_thread_pool* pool) {
  */
 static pthread_t start_worker_thread(struct worker_thread_params* params) {
     pthread_t pthread_id = 0;
-    // TODO complete this function
-
     int ret = 0;
 
     //init attr
@@ -101,19 +89,6 @@ void delete_worker_thread_pool(struct worker_thread_pool* pool) {
     if (!pool->thread_list) {
         return;
     }
-    // TODO complete this function
-
-    /*
-    iterate over each worker, the pool->thread is head ptr for pool
-    call pthread_join for every worker in thread pool
-    after join returns free and move to next
-    while worker!=null
-    join
-    next = worker->next
-    free
-    worker = next
-
-    */
 
     struct worker_thread* worker = pool->thread_list;
     struct worker_thread* next;
