@@ -41,7 +41,27 @@ void add_request(struct request_queue* req_queue, int request_num) {
     struct request* new_req = NULL;
 
     // TODO complete the code as described in the comments
-    //use broadcast API to notify all threads
+     struct request* new_req = create_request(request_num);
+
+    // Begin Critical Section
+    LOCK_MTX(req_queue->mutex);
+
+    //if queue empty
+    if (req_queue->tail == NULL) {
+        req_queue->head = new_req;
+        req_queue->tail = new_req;
+
+    } else { //add to tail
+        req_queue->tail->next = new_req;
+        req_queue->tail = new_req;
+    }
+
+    //Update num_requests & Signal waiting threads
+    ++req_queue->num_requests;
+    SIGNAL(req_queue->cond_var);
+
+    UNLOCK_MTX(req_queue->mutex);
+    // End Critical Section
 }
 
 /**
@@ -61,6 +81,29 @@ struct request* wait_for_request(struct request_queue* req_queue) {
     //check available
     //if nothing available, block
     //if is available wake due to broadcast, take & return
+
+    // Begin Critical Section
+    LOCK_MTX(req_queue->mutex);
+
+    while (req_queue->num_requests == 0 && !req_queue->is_closed) {
+
+        //if there are requests, take off queue, adjust head ptr
+        if (req_queue->num_requests > 0) {
+            req = req_queue->head; 
+            req_queue->head = req->next;
+
+            if (req_queue->head == NULL) {
+                req_queue->tail = NULL;
+            }
+            --req_queue->num_requests;
+
+        } else{
+            WAIT(req_queue->cond_var, req_queue->mutex); //wait until signal that num_requests is greater than 0
+        }
+    }
+
+    UNLOCK_MTX(req_queue->mutex);
+    // End Critical Section
 
     return req;
 }
@@ -96,6 +139,15 @@ void delete_request_queue(struct request_queue* req_queue) {
  */
 void close_request_queue(struct request_queue* req_queue) {
     // TODO complete this function
+    
+    // Begin Critical Section
+    LOCK_MTX(req_queue->mutex);
+
+    req_queue->is_closed = true;
+    BROADCAST(req_queue->cond_var);
+
+    UNLOCK_MTX(req_queue->mutex);
+    // End Critical Section
 }
 
 bool is_request_queue_closed(struct request_queue* req_queue) {
