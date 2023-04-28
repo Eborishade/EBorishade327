@@ -1,5 +1,5 @@
 #include "request_queue.h"
-
+#include <pthread.h>
 #include <assert.h>
 
 #include "common.h"
@@ -39,9 +39,13 @@ struct request_queue* create_request_queue(pthread_mutex_t* p_mutex,
 void add_request(struct request_queue* req_queue, int request_num) {
     // TODO dynamically allocate memory for a request object
     struct request* new_req = NULL;
+    new_req = malloc(sizeof(struct request));
+    if (!new_req) {
+        handle_error("create_request: malloc");
+    }
+    new_req->number = request_num;
+    new_req->next = NULL;
 
-    // TODO complete the code as described in the comments
-     struct request* new_req = create_request(request_num);
 
     // Begin Critical Section
     LOCK_MTX(req_queue->mutex);
@@ -58,7 +62,10 @@ void add_request(struct request_queue* req_queue, int request_num) {
 
     //Update num_requests & Signal waiting threads
     ++req_queue->num_requests;
-    SIGNAL(req_queue->cond_var);
+    if (pthread_cond_broadcast(req_queue->cond_var) != 0) {
+        handle_error("add_request:pthread_cond_broadcast");
+    }
+    
 
     UNLOCK_MTX(req_queue->mutex);
     // End Critical Section
@@ -85,7 +92,7 @@ struct request* wait_for_request(struct request_queue* req_queue) {
     // Begin Critical Section
     LOCK_MTX(req_queue->mutex);
 
-    while (req_queue->num_requests == 0 && !req_queue->is_closed) {
+    while (!(req_queue->num_requests == 0 && req_queue->is_closed)) {
 
         //if there are requests, take off queue, adjust head ptr
         if (req_queue->num_requests > 0) {
@@ -95,10 +102,14 @@ struct request* wait_for_request(struct request_queue* req_queue) {
             if (req_queue->head == NULL) {
                 req_queue->tail = NULL;
             }
-            --req_queue->num_requests;
+            --req_queue->num_requests; //!!!! HOW DOES REQ MAKE IT TO WORKER THREAD? !!!!
+            break;
 
         } else{
-            WAIT(req_queue->cond_var, req_queue->mutex); //wait until signal that num_requests is greater than 0
+            //wait until signal that num_requests is greater than 0
+            if (pthread_cond_wait(req_queue->cond_var, req_queue->mutex) != 0) {
+                handle_error("add_request:pthread_cond_broadcast");
+            }
         }
     }
 
@@ -144,7 +155,9 @@ void close_request_queue(struct request_queue* req_queue) {
     LOCK_MTX(req_queue->mutex);
 
     req_queue->is_closed = true;
-    BROADCAST(req_queue->cond_var);
+    if (pthread_cond_broadcast(req_queue->cond_var) != 0) {
+        handle_error("add_request:pthread_cond_broadcast");
+    }
 
     UNLOCK_MTX(req_queue->mutex);
     // End Critical Section

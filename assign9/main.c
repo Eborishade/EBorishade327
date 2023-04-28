@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     static pthread_mutex_t req_mutex = PTHREAD_MUTEX_INITIALIZER;
     static pthread_cond_t req_cond; 
     static pthread_condattr_t condattr;
-
+    int ret = 0;
     int thread_pool_size = 0;
     int request_count = 0;
     if (argc < 3) {
@@ -62,8 +62,10 @@ int main(int argc, char* argv[]) {
     // *** end constructors ***
 
 
-    for (int i = 0; i < thread_pool_size; ++i) {
+    for (int i = 1; i <= thread_pool_size; ++i) {
+        //printf("Spawning worker thread-%d\n", i);
         add_worker_thread(thread_pool);
+        //printf("Successfully spawned worker thread-%d :: standby...\n", i);
     }
 
     int number = 1;

@@ -15,6 +15,8 @@ Example:
 */
 static pthread_t start_worker_thread(struct worker_thread_params* params);
 
+
+
 struct worker_thread_pool* create_worker_thread_pool(
     struct request_queue* req_queue) {
     struct worker_thread_pool* thread_pool =
@@ -63,7 +65,28 @@ void add_worker_thread(struct worker_thread_pool* pool) {
 static pthread_t start_worker_thread(struct worker_thread_params* params) {
     pthread_t pthread_id = 0;
     // TODO complete this function
-    //pthread create, returns pthread id.
+
+    int ret = 0;
+
+    //init attr
+    pthread_attr_t attr;
+    if ((ret = pthread_attr_init(&attr))) {
+        handle_error_en(ret, "pthread_attr_init");
+    }
+    //set detach state of attr to JOINABLE
+    if (( ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE) )) {
+        handle_error_en(ret, "pthread_attr_setdetachstate");
+    }
+
+    //passpthread_id, attr ,do_work function, and params
+    if (( ret = pthread_create(&pthread_id, &attr, do_work, params) )) {
+        handle_error_en(ret, "pthread_create");
+    }
+
+    // Destroy the thread attributes object
+    if ((ret = pthread_attr_destroy(&attr))) {
+        handle_error_en(ret, "pthread_attr_destroy");
+    }
 
     return pthread_id;
 }
@@ -79,4 +102,31 @@ void delete_worker_thread_pool(struct worker_thread_pool* pool) {
         return;
     }
     // TODO complete this function
+
+    /*
+    iterate over each worker, the pool->thread is head ptr for pool
+    call pthread_join for every worker in thread pool
+    after join returns free and move to next
+    while worker!=null
+    join
+    next = worker->next
+    free
+    worker = next
+
+    */
+
+    struct worker_thread* worker = pool->thread_list;
+    struct worker_thread* next;
+    int ret = 0; 
+
+    while (worker != NULL){
+        if ((ret = pthread_join(worker->thread, NULL))) {
+            handle_error_en(ret, "delete_worker_thread_pool:pthread_join");
+        }
+        
+        next = worker->next;
+        free(worker);
+        worker = next;
+    }
+       
 }
