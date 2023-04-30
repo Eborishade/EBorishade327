@@ -147,8 +147,9 @@ void close_request_queue(struct request_queue* req_queue) {
     LOCK_MTX(req_queue->mutex);
 
     req_queue->is_closed = true;
-    if (pthread_cond_broadcast(req_queue->cond_var) != 0) {
-        handle_error("add_request:pthread_cond_broadcast");
+    int rval = pthread_cond_broadcast(req_queue->cond_var);
+    if (rval){
+        handle_error_en(rval, "close_request_queue:pthread_cond_broadcast");
     }
 
     UNLOCK_MTX(req_queue->mutex);
